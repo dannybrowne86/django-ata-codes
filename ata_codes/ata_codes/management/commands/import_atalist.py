@@ -24,7 +24,7 @@ class Command(BaseCommand):
             primary_ata = int(row[0][:2])
             secondary_ata = int(row[0][2:])
             last_date = datetime.datetime.strptime(row[1], '%m/%d/%Y').date()
-            name = row[2]
+            name = row[2].title()
             severity_factor = int(row[3])
             
             # check database for existing item
@@ -34,7 +34,6 @@ class Command(BaseCommand):
                 if ata_code.last_change_date != last_date:
                     ata_code.name = name
                     ata_code.severity_factor = severity_factor
-                    ata_code.name = name
                     ata_code.save()
                     updated_count += 1
                 else:

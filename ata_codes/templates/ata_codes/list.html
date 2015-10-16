@@ -1,0 +1,76 @@
+{% extends "ata_codes/base.html" %}
+{% load bootstrap_toolkit %}
+{% load url from future %}
+
+{% block title %}ATA Codes{% endblock title %}
+
+{% block content %}
+    <div class="row-fluid">
+        <div class="span12">
+            <h2>ATA Codes</h2>
+            <ul class="nav nav-pills">
+                {% if perms.ata_codes.add_atacode %}
+                    <li><a href='{% url 'add_ata_code' %}'>Add ATA Code</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span12">
+            <form class='form-inline' accept-charset='UTF-8' method='get' action=''>
+                {{ form|as_bootstrap:"inline" }}
+                <button type='submit' class='btn' name='submit'>Search</button>
+                <button type="submit" class="btn btn-success" name="export_ata_code_list" value="True">Export ATA Code List</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="accordion" id="ata-accordion">
+            {% for primary_ata, atas in ata_codes %}
+                <div class="accordion-group">
+                    <div class="accordion-heading">
+                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#ata-accordion" href="#ata{{ primary_ata }}">
+                        {{ primary_ata }}: {{ atas.0.name }}
+                        </a>
+                    </div>
+                    <div id="ata{{ primary_ata }}" class="accordion-body collapse">
+                        <div class="accordion-inner">
+                            <table class="table table-bordered table-striped table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th>ATA Code</th>
+                                        <th>Name</th>
+                                        <th>Severity Factor</th>
+                                        <th>Last Changed Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for ata in atas %}
+                                    <tr>
+                                        <td>
+                                            {{ ata.primary_ata_code }}-{{ ata.secondary_ata_code|stringformat:"02d" }}
+                                            {% if perms.ata_codes.delete_ata %}
+                                            <a class="pull-right" href="{% url 'delete_ata_code' ata.id %}"><i class="icon-trash"></i> </a>
+                                            {% endif %}
+                                            {% if perms.ata_codes.change_ata %}
+                                            <a class="pull-right" href="{% url 'edit_ata_code' ata.id %}"><i class="icon-pencil"></i> </a>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ ata.name }}</a></td>
+                                        <td>{{ ata.severity_factor }}</td>
+                                        <td>{{ ata.last_change_date }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}
